@@ -1,6 +1,6 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "project-teaser",
+	"name": "project-portfolio-kazukoba-teaser",
 	"main": "worker/index.ts",
 	"compatibility_date": "2026-08-31",
 

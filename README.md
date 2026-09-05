@@ -32,9 +32,14 @@ npx wrangler secret put BASIC_AUTH_USER
 npx wrangler secret put BASIC_AUTH_PASS
 ```
 
-> **注意**: ダッシュボードから登録する場合は Worker の **Settings → Variables and Secrets**（ランタイム）に入れる。
+> **注意1**: ダッシュボードから登録する場合は Worker の **Settings → Variables and Secrets**（ランタイム）に入れる。
 > Workers Builds の「Build variables and secrets」はビルドコンテナ内でしか使えず、`env` には届かない。
 > 正しく入っているかは `npx wrangler secret list` で確認できる。
+
+> **注意2**: ダッシュボードでシークレットを追加しても、**新しいバージョンがアップロードされるだけでデプロイはされない**。
+> 稼働中のバージョンには反映されないため、正しい ID / パスワードでも 401 になる（フェイルクローズ）。
+> 追加したら Worker → **デプロイ** から該当バージョンを Deploy するか、`npx wrangler versions deploy <version-id>` を実行する。
+> どのバージョンが稼働中かは `npx wrangler deployments list` で確認できる。
 
 ローカル（`npm run cf:dev`）は git 管理外の `.dev.vars` を読む。
 雛形は [.dev.vars.example](.dev.vars.example)。

@@ -1,0 +1,27 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "project-teaser",
+	"main": "worker/index.ts",
+	"compatibility_date": "2026-08-31",
+
+	// adapter-static の書き出し先をそのまま配信する。
+	"assets": {
+		"directory": "./build",
+		"binding": "ASSETS",
+
+		// 既定ではアセットが Worker より先に返るため BASIC 認証を素通りしてしまう。
+		// すべてのリクエストを Worker に通してから ASSETS.fetch() する。
+		"run_worker_first": true,
+
+		// `/about` → `build/about.html` を解決する。
+		"html_handling": "auto-trailing-slash",
+		"not_found_handling": "none"
+	},
+
+	"observability": {
+		"enabled": true
+	}
+
+	// BASIC_AUTH_USER / BASIC_AUTH_PASS は secret で渡す（README 参照）。
+	// ここに vars として書くとリポジトリに認証情報が残るので置かない。
+}

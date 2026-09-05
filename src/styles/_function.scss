@@ -1,0 +1,38 @@
+@use "sass:math";
+@use "./var" as v;
+
+// =============================================================
+// リキッドレイアウト用の関数
+// =============================================================
+//
+// --vw は「ベース幅の 1%」を表す CSS 変数（global.scss で定義）。
+// つまり `var(--vw) * 100` = ベース幅。
+//
+//   vw(300) = 300 * (ベース幅 / 375)
+//
+// デザインカンプ上の数値をそのまま渡せば、ベース幅に比例して
+// 拡縮するサイズになる。px / rem は使わない。
+
+@function strip-unit($num) {
+	@if math.is-unitless($num) {
+		@return $num;
+	}
+	@return math.div($num, ($num * 0 + 1));
+}
+
+/// デザインカンプの数値 -> リキッドなサイズ
+/// @param {Number} $num  - カンプ上の px 数値（単位なし）
+/// @param {Number} $base - 基準となるカンプ幅
+@function vw($num, $base: v.$desWSp) {
+	@return calc(#{strip-unit($num)} * ((var(--vw, 1vw) * 100) / #{strip-unit($base)}));
+}
+
+/// Tab デザインカンプ（768px）基準
+@function vwTab($num) {
+	@return vw($num, v.$desWTab);
+}
+
+/// PC デザインカンプ（1280px）基準
+@function vwPc($num) {
+	@return vw($num, v.$desWPc);
+}

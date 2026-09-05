@@ -1,0 +1,103 @@
+@use "./var" as v;
+
+// =============================================================
+// メディアクエリ
+// =============================================================
+//
+// 生の @media は書かず、必ずこの mixin を通す。
+//
+//   "sp"     : SP のみ            (max-width: 767.98px)
+//   "tab"    : Tab 以上           (min-width: 768px)
+//   "pc"     : PC レイアウト      (min-width: 1024px)
+//   "hover"  : ホバー可能デバイス (any-hover: hover)
+//   "noMove" : アニメーション抑制 (prefers-reduced-motion: reduce)
+
+@mixin mq($bp: "pc") {
+	@if $bp == "sp" {
+		@media screen and (max-width: #{v.$bpSpMax}px) {
+			@content;
+		}
+	} @else if $bp == "tab" {
+		@media screen and (min-width: #{v.$bpTabMin}px) {
+			@content;
+		}
+	} @else if $bp == "pc" {
+		@media screen and (min-width: #{v.$bpPcMin}px) {
+			@content;
+		}
+	} @else if $bp == "hover" {
+		@media (any-hover: hover) {
+			@content;
+		}
+	} @else if $bp == "noMove" {
+		@media (prefers-reduced-motion: reduce) {
+			@content;
+		}
+	} @else {
+		@error "mq(): unknown breakpoint `#{$bp}`. use sp / tab / pc / hover / noMove.";
+	}
+}
+
+// =============================================================
+// タイポグラフィ
+// =============================================================
+//
+// font-size / line-height / letter-spacing / font-weight / font-family を
+// 個別に手書きせず、必ずこの mixin で指定する。
+//
+//   @include m.font(f.vw(16));                          // 日本語     Noto Sans JP
+//   @include m.font(f.vw(14), 1.7, 0.1, 400, "en");     // 英語本文   Source Sans 3
+//   @include m.font(f.vw(16), 1.2, 0.1, 400, "mont");   // 英字見出し Montserrat
+
+@mixin font($size, $height: 1.8, $letspa: 0.05, $weight: 400, $fam: "") {
+	font-size: $size;
+	line-height: $height;
+	letter-spacing: #{$letspa}em;
+	font-weight: $weight;
+
+	@if $fam == "en" {
+		font-family: v.$f-en;
+	} @else if $fam == "mont" {
+		font-family: v.$f-mont;
+	} @else {
+		font-family: v.$f-ja;
+	}
+}
+
+// =============================================================
+// インタラクション
+// =============================================================
+//
+// リンク / ボタンのホバーは「透過」で統一する。
+// ホバーできないデバイスでは何も起きない。
+//
+//   .link { @include m.linkHover; }
+
+@mixin linkHover($opacity: v.$hoverOpacity) {
+	@include mq("hover") {
+		transition: opacity v.$hoverDuration ease;
+
+		&:hover {
+			opacity: $opacity;
+		}
+	}
+}
+
+// =============================================================
+// フルブリード
+// =============================================================
+//
+// ベース幅 / コンテンツ幅の外側にはみ出して、画面幅いっぱいに広げる。
+// KV や WORKS の画像スライダーのように「画像エリアだけ画面幅」に
+// したいときに使う。
+//
+//   .kv__slider { @include m.fullBleed; }
+//
+// 親の幅（100%）と画面幅（--screen-w）の差を左右の負マージンで
+// 打ち消しているだけなので、position は使わず通常フローのまま。
+// 親を辿って overflow が clip / hidden になっていると効かない点に注意。
+
+@mixin fullBleed {
+	width: auto;
+	margin-inline: calc((100% - var(--screen-w)) / 2);
+}

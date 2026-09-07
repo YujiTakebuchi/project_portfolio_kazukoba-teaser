@@ -109,12 +109,10 @@
 	:global(.tabbr) {
 		display: none;
 
-		@include m.mq("tab") {
+		// "tab" は "pc" と同条件になったため、"tab" で出して "pc" で消す
+		// 従来の書き方では常に消えてしまう。Tab 帯だけを直接狙う。
+		@include m.mq("tabOnly") {
 			display: inline;
-		}
-
-		@include m.mq("pc") {
-			display: none;
 		}
 	}
 </style>

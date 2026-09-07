@@ -6,9 +6,14 @@
 //
 // 生の @media は書かず、必ずこの mixin を通す。
 //
-//   "sp"     : SP のみ            (max-width: 767.98px)
-//   "tab"    : Tab 以上           (min-width: 768px)
-//   "pc"     : PC レイアウト      (min-width: 1024px)
+//   "sp"      : SP のみ            (max-width: 767.98px)
+//   "tab"     : Tab 以上           (min-width: 768px)
+//   "tabOnly" : Tab のみ           (768px 〜 1023.98px)
+//   "pc"      : PC レイアウト      (min-width: 768px)
+//
+// タブレットも PC レイアウトなので "tab" と "pc" は同じ条件になる。
+// Tab 帯だけを狙いたいときは "tabOnly" を使う（"tab" だと後続の "pc" に
+// 必ず上書きされるので注意）。
 //   "hover"  : ホバー可能デバイス (any-hover: hover)
 //   "noMove" : アニメーション抑制 (prefers-reduced-motion: reduce)
 
@@ -19,6 +24,10 @@
 		}
 	} @else if $bp == "tab" {
 		@media screen and (min-width: #{v.$bpTabMin}px) {
+			@content;
+		}
+	} @else if $bp == "tabOnly" {
+		@media screen and (min-width: #{v.$bpTabMin}px) and (max-width: #{v.$bpTabMax}px) {
 			@content;
 		}
 	} @else if $bp == "pc" {
@@ -34,7 +43,7 @@
 			@content;
 		}
 	} @else {
-		@error "mq(): unknown breakpoint `#{$bp}`. use sp / tab / pc / hover / noMove.";
+		@error "mq(): unknown breakpoint `#{$bp}`. use sp / tab / tabOnly / pc / hover / noMove.";
 	}
 }
 

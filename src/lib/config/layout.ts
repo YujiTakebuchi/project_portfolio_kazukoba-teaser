@@ -5,8 +5,8 @@
  * どちらかを変更したら必ず両方揃えること。
  */
 
-/** PC レイアウトの下限（px） */
-export const BP_PC_MIN = 1024;
+/** PC レイアウトの下限（px）。タブレットもこちらに含める。 */
+export const BP_PC_MIN = 768;
 
 /**
  * CSS の m.mq("pc") と同じ条件。
@@ -17,10 +17,10 @@ export const BP_PC_MIN = 1024;
  */
 export const MQ_PC = `(min-width: ${BP_PC_MIN}px)`;
 
-/** 最大ベース幅（px）: W < 1024px  モバイルレイアウト */
+/** 最大ベース幅（px）: W < 768px  モバイルレイアウト（画面幅が届かないため実質未使用） */
 export const MAX_BASE_W_SP = 835;
 
-/** 最大ベース幅（px）: W >= 1024px  PC レイアウト */
+/** 最大ベース幅（px）: W >= 768px  PC レイアウト */
 export const MAX_BASE_W_PC = 1280;
 
 /**

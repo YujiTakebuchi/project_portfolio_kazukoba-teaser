@@ -12,8 +12,8 @@
 
 <!--
 	コンテンツ幅（ベース幅に対する割合）のコンテナ。
-	W <  1024px : ベース幅の 89%
-	W >= 1024px : ベース幅の 92%
+	W <  768px : ベース幅の 89%
+	W >= 768px : ベース幅の 92%
 -->
 <svelte:element this={tag} class="container">
 	{@render children()}

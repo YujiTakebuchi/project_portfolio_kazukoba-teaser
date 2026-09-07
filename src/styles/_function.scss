@@ -8,6 +8,10 @@
 // --vw は「ベース幅の 1%」を表す CSS 変数（global.scss で定義）。
 // つまり `var(--vw) * 100` = ベース幅。
 //
+// --vw-scale は「カンプ基準のサイズにかける倍率」。Tab 帯だけ 1.4 になる。
+// レイアウト幅（--base-w / --content-w）は --vw から直接導出されるため
+// この倍率の影響を受けない。倍率がかかるのはこの関数が返す値だけ。
+//
 //   vw(300) = 300 * (ベース幅 / 375)
 //
 // デザインカンプ上の数値をそのまま渡せば、ベース幅に比例して
@@ -24,7 +28,9 @@
 /// @param {Number} $num  - カンプ上の px 数値（単位なし）
 /// @param {Number} $base - 基準となるカンプ幅
 @function vw($num, $base: v.$desWSp) {
-	@return calc(#{strip-unit($num)} * ((var(--vw, 1vw) * 100) / #{strip-unit($base)}));
+	@return calc(
+		#{strip-unit($num)} * var(--vw-scale, 1) * ((var(--vw, 1vw) * 100) / #{strip-unit($base)})
+	);
 }
 
 /// Tab デザインカンプ（768px）基準

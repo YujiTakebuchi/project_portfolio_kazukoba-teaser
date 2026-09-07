@@ -22,11 +22,11 @@
 // :root の値はスクリプト実行前（SSR / ハイドレーション前）のフォールバック。
 
 :root {
-	// --- W < 1024px : モバイルレイアウト ---
+	// --- W < 768px : モバイルレイアウト ---
 	--max-base-w: #{v.$maxBaseWSp}px;
 	--content-ratio: #{v.$contentRatioSp};
 
-	// --- W >= 1024px : PC レイアウト ---
+	// --- W >= 768px : PC レイアウト ---
 	@include m.mq("pc") {
 		--max-base-w: #{v.$maxBaseWPc}px;
 		--content-ratio: #{v.$contentRatioPc};
@@ -41,6 +41,16 @@
 	// 以降はすべて --vw から導出するため vw 単位を含まない
 	--base-w: calc(var(--vw) * 100);
 	--content-w: calc(var(--base-w) * var(--content-ratio));
+
+	// --- カンプ基準サイズの倍率 ---
+	// f.vw() / f.vwTab() / f.vwPc() が返す値にだけ掛かる。
+	// Tab 帯は PC カンプ 1280 基準のままだと小さくなりすぎるので持ち上げる。
+	// --base-w / --content-w には掛からない（掛けると横にはみ出す）。
+	--vw-scale: 1;
+
+	@include m.mq("tabOnly") {
+		--vw-scale: #{v.$tabScale};
+	}
 
 	// --- 配色 ---
 	// 共通コンポーネント（ヘッダー / フッターなど）はこの3つだけを見る。

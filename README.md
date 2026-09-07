@@ -79,7 +79,7 @@ npm run deploy
 `document.documentElement` の `--vw` / `--screen-w` を更新する（`window.innerWidth` は使わない）。
 
 ```
-baseW = min(clientWidth, clientWidth >= 1024 ? 1280 : 835)
+baseW = min(clientWidth, clientWidth >= 768 ? 1280 : 835)
 --vw  = baseW / 100  →  "8.35px" のような px 値
 ```
 
@@ -88,12 +88,34 @@ baseW = min(clientWidth, clientWidth >= 1024 ? 1280 : 835)
 
 閾値の定数は [src/lib/config/layout.ts](src/lib/config/layout.ts)（SCSS 側は `_var.scss`。両方揃えること）。
 
+### `--vw-scale`（Tab 帯の拡大）
+
+Tab（768〜1023px）は PC レイアウトだが、PC カンプ 1280 基準のままだと画面が狭いぶん
+文字も余白も小さくなりすぎる。そこで **`f.vw()` 系が返す値にだけ** 倍率を掛ける。
+
+```scss
+// _function.scss
+calc($num * var(--vw-scale, 1) * ((var(--vw) * 100) / $base))
+```
+
+| 帯                 | `--vw-scale` |
+| ------------------ | ------------ |
+| `W < 768px`        | 1            |
+| `768 <= W < 1024`  | `$tabScale`（1.4） |
+| `W >= 1024px`      | 1            |
+
+倍率は `--base-w` / `--content-w` には掛からない。掛けるとセンターカラムが画面からはみ出す。
+値は `_var.scss` の `$tabScale`、流し込みは `global.scss` の `:root`。
+
 ### ブレークポイント
 
 | 条件          | レイアウト | 最大ベース幅 | コンテンツ幅 |
 | ------------- | ---------- | ------------ | ------------ |
-| `W < 1024px`  | モバイル   | 835px        | 89%          |
-| `W >= 1024px` | PC         | 1280px       | 92%          |
+| `W < 768px`   | モバイル   | 835px        | 89%          |
+| `W >= 768px`  | PC         | 1280px       | 92%          |
+
+タブレット（768〜1023px）は PC レイアウトだが、サイズだけ `--vw-scale` で 1.4 倍する（上記）。
+`.side` は画面幅が 1280px を超えてから開く。
 
 定義は [src/styles/global.scss](src/styles/global.scss) の `:root`、
 数値は [src/styles/\_var.scss](src/styles/_var.scss)。
@@ -144,7 +166,8 @@ width: f.vwTab(300); // Tab カンプ（768px）基準
 width: f.vwPc(300); // PC カンプ（1280px）基準
 ```
 
-内部的には `calc($num * ((var(--vw) * 100) / $base))`。`--vw` はベース幅の 1%。
+内部的には `calc($num * var(--vw-scale) * ((var(--vw) * 100) / $base))`。
+`--vw` はベース幅の 1%、`--vw-scale` は Tab 帯だけ 1.4 になる倍率。
 
 ### メディアクエリ: `m.mq()`
 
@@ -154,11 +177,15 @@ width: f.vwPc(300); // PC カンプ（1280px）基準
 @include m.mq("sp") {
 } // max-width: 767.98px
 @include m.mq("tab") {
-} // min-width: 768px
+} // min-width: 768px（= "pc" と同条件）
+@include m.mq("tabOnly") {
+} // 768px 〜 1023.98px（Tab 帯だけ）
 @include m.mq("pc") {
-} // min-width: 1024px
+} // min-width: 768px（タブレットも PC レイアウト）
 @include m.mq("hover") {
 } // any-hover: hover
+@include m.mq("noMove") {
+} // prefers-reduced-motion: reduce
 ```
 
 ### フォント: `m.font()`

@@ -42,11 +42,13 @@ font-size: f.vw(16);  // 16px相当のフォントサイズ
 gap: f.vw(10);        // 10px相当のギャップ
 ```
 
-内部的には `calc($num * ((var(--vw, 1vw) * 100) / $base))` に変換される。デフォルトのベース幅はSPデザイン幅の375px（`v.$desWSp`）。
+内部的には `calc($num * var(--vw-scale, 1) * ((var(--vw, 1vw) * 100) / $base))` に変換される。
+`--vw-scale` は Tab 帯（768〜1023px）だけ 1.4 になる倍率で、レイアウト幅（`--base-w` /
+`--content-w`）には掛からない。デフォルトのベース幅はSPデザイン幅の375px（`v.$desWSp`）。
 
 ### PC用: `f.vwPc()`
 
-PCのデザインカンプに基づくサイズ指定には `f.vwPc()` を使う。ベース幅は1280px（`v.$bpPcMin`）。
+PCのデザインカンプに基づくサイズ指定には `f.vwPc()` を使う。ベース幅は1280px（`v.$desWPc`）。
 | `v.$c-bg` | #FFFFFF | 背景色 |
 | `v.$c-text` | #333333 | テキスト色 |
 | `v.$c-line` | #DDDDDD | 罫線 |
@@ -70,10 +72,17 @@ PCのデザインカンプに基づくサイズ指定には `f.vwPc()` を使う
 | Mixin | 対象 | 条件 |
 |-------|------|------|
 | `m.mq("sp")` | SP のみ | max-width: 767.98px |
-| `m.mq("pc")` | PC のみ | min-width: 1024px |
+| `m.mq("tab")` | Tab 以上（= `"pc"` と同条件） | min-width: 768px |
+| `m.mq("tabOnly")` | Tab のみ | 768px 〜 1023.98px |
+| `m.mq("pc")` | PC のみ（タブレット含む） | min-width: 768px |
 | `m.mq("hover")` | ホバー可能デバイス | any-hover: hover |
+| `m.mq("noMove")` | アニメーション抑制 | prefers-reduced-motion: reduce |
 
-ブレークポイント: **SP < 768 < Tab < 1024 < PC**
+ブレークポイント: **SP < 768 <= Tab < 1024 <= PC**
+
+Tab と PC は同じ PC レイアウト・同じ PC カンプ（1280）基準。違いは Tab 帯だけ
+`--vw-scale` でサイズを 1.4 倍する点だけ。Tab 帯だけを狙うときは `"tabOnly"` を使う
+（`"tab"` は `"pc"` と同条件なので、後続の `"pc"` に必ず上書きされる）。
 
 ```scss
 .element {
@@ -210,7 +219,9 @@ PCのデザインカンプに基づくサイズ指定には `f.vwPc()` を使う
 |------|----|------|
 | `v.$desWSp` | 375 | SPデザイン基準幅 |
 | `v.$bpTabMin` | 768 | タブレット最小幅 |
-| `v.$bpPcMin` | 1024 | PC最小幅 |
+| `v.$bpTabMax` | 1023.98 | タブレット最大幅 |
+| `v.$tabScale` | 1.4 | Tab 帯のサイズ倍率 |
+| `v.$bpPcMin` | 768 | PC最小幅（タブレット含む） |
 | `v.$c-bg` | #FFFFFF | 背景色 |
 | `v.$c-text` | #333333 | テキスト色 |
 | `v.$c-line` | #DDDDDD | 罫線 |

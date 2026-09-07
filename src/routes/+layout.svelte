@@ -1,5 +1,7 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
+	import appleIcon from '$lib/assets/apple-touch-icon.png';
+	import ogp from '$lib/assets/ogp.jpg';
 	import ViewportMeasure from '@/lib/components/ViewportMeasure.svelte';
 	import '@/styles/global.scss';
 
@@ -8,6 +10,8 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<link rel="apple-touch-icon" sizes="180x180" href={appleIcon}>
+	<meta property="og:image" content={ogp}>
 </svelte:head>
 
 <!--

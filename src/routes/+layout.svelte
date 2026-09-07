@@ -1,7 +1,7 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
 	import appleIcon from '$lib/assets/apple-touch-icon.png';
-	import ogp from '$lib/assets/ogp.jpg';
+	import ogp from '$lib/assets/OGP.jpg';
 	import ViewportMeasure from '@/lib/components/ViewportMeasure.svelte';
 	import '@/styles/global.scss';
 
